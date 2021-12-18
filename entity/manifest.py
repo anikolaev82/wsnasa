@@ -1,17 +1,21 @@
-import datetime
 from dataclasses import dataclass, field
 from datetime import date
-from typing import List
+from typing import List, Callable
 
 
 @dataclass
 class Photo:
+    repo: Callable
     id: int
     img_src: str
     rover: str = field(default=None)
     earth_date: date = field(default=None)
     sol: int = field(default=0)
     camera: dict = field(default_factory=dict)
+
+    def download(self):
+        repo = self.repo(self)
+        return repo.get_data()
 
 
 @dataclass
@@ -32,4 +36,3 @@ class Manifest:
     max_sol: int = field(default=0)
     total_photos: int = field(default=0)
     photos: List = field(default_factory=list)
-

@@ -1,7 +1,9 @@
+import json
 from abc import ABC, abstractmethod
 from typing import Iterable, List
+
 import requests
-import json
+
 from config import BASE_URI, TOKEN
 from entity.manifest import Manifest, Photos, Photo
 
@@ -39,6 +41,18 @@ class RepoManifest(AbcRepo):
         return self.__data.get(self.__rover)
 
 
+class RepoBPhoto(AbcRepo):
+
+        def __init__(self, photo: Photo):
+            self._photo = photo
+            self._img = None
+
+        def get_data(self):
+            if self._img is None:
+                self._img = requests.get(self._photo.img_src)
+            return self._img
+
+
 class RepoPhoto(AbcRepo):
 
     def __init__(self, rover: Manifest, day: Photos):
@@ -53,7 +67,7 @@ class RepoPhoto(AbcRepo):
         if isinstance(self.__reciv, Iterable) and len(self.__reciv) == 0:
             r = requests.get(self.__base_uri, params=self.__keys)
             self.__raw_data = json.loads(r.content)['photos']
-            self.__reciv = [Photo(**i) for i in self.__raw_data]
+            self.__reciv = [Photo(RepoBPhoto, **i) for i in self.__raw_data]
         return self.__reciv
 
 

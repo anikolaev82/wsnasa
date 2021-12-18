@@ -5,11 +5,11 @@ class Curiosity:
         self.__name = 'Opportunity'
         self.__cameras = ('FHAZ', 'RHAZ', 'NAVCAM', 'PANCAM', 'MINITES')
 
-    def get_cameras(self):
+    def get_cameras(self) -> tuple:
         return self.__cameras
 
-    def has_camera(self, camera: str):
-        return self.__cameras in camera
+    def has_camera(self, camera: str) -> bool:
+        return camera in self.__cameras
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__name

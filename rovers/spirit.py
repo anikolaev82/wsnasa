@@ -1,6 +1,6 @@
-from entity.manifest import Photos
-from typing import Iterable
-from utils.repo import Repo
+from entity.manifest import Photo, Photos, Manifest
+from typing import List
+from utils.repo import Repo, RepoBPhoto
 
 
 class Spirit:
@@ -10,13 +10,13 @@ class Spirit:
         self.__manifest = Repo.manifest(self.__name)
         self.__photos = None
 
-    def manifest(self):
+    def manifest(self) -> Manifest:
         return self.__manifest
 
-    def photos(self, days: Photos):
+    def photos(self, days: Photos) -> List[Photo]:
         if self.__photos is None:
             self.__photos = Repo.photos(self.__manifest, days)
         return self.__photos
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.__name
