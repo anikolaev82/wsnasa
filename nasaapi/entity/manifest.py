@@ -25,6 +25,9 @@ class Photos:
     total_photos: int = field(default=0)
     cameras: List[str] = field(default_factory=list)
 
+    def __hash__(self):
+        return hash(f"{self.sol}-{self.earth_date}-{self.total_photos}-{len(self.cameras)}")
+
 
 @dataclass
 class Manifest:

@@ -1,11 +1,11 @@
 import json
 from abc import ABC, abstractmethod
-from typing import Iterable, List
+from typing import Iterable, List, Tuple
 
 import requests
 
-from config import BASE_URI, TOKEN
-from entity.manifest import Manifest, Photos, Photo
+from nasaapi.config import BASE_URI, TOKEN
+from nasaapi.entity.manifest import Manifest, Photos, Photo
 
 
 class AbcRepo(ABC):
@@ -67,7 +67,7 @@ class RepoPhoto(AbcRepo):
         if isinstance(self.__reciv, Iterable) and len(self.__reciv) == 0:
             r = requests.get(self.__base_uri, params=self.__keys)
             self.__raw_data = json.loads(r.content)['photos']
-            self.__reciv = [Photo(RepoBPhoto, **i) for i in self.__raw_data]
+            self.__reciv = tuple(Photo(RepoBPhoto, **i) for i in self.__raw_data)
         return self.__reciv
 
 
@@ -79,6 +79,6 @@ class Repo:
         return manifest.get_data()
 
     @staticmethod
-    def photos(rover: Manifest, day: Photos) -> List[Photo]:
+    def photos(rover: Manifest, day: Photos) -> Tuple[Photo]:
         photo = RepoPhoto(rover, day)
         return photo.get_data()
