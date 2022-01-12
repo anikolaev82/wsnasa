@@ -49,7 +49,7 @@ class RepoBPhoto(AbcRepo):
 
         def get_data(self):
             if self._img is None:
-                self._img = requests.get(self._photo.img_src)
+                self._img = requests.get(self._photo.img_src).content
             return self._img
 
 
