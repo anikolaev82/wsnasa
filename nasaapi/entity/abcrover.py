@@ -10,6 +10,7 @@ class ABCRover(ABC):
     """
     Родительский класс марсохода
     """
+
     def __init__(self, rover: str):
         self.__name = rover
         self.__cache = Storage()

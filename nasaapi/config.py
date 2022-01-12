@@ -1,6 +1,9 @@
 
 
 class Config:
+    """
+    Хранит необходимые настройки
+    """
     _instance = {}
 
     def __new__(cls, *args, **kwargs):

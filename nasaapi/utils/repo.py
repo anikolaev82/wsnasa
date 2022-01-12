@@ -1,7 +1,7 @@
 import json
 import math
 from abc import ABC, abstractmethod
-from typing import Iterable, Tuple
+from typing import Iterable, List
 
 import requests
 
@@ -14,6 +14,7 @@ class AbcRepo(ABC):
     Абстрактный класс хранилища данных.
     От него наследуются все классы получающие данные
     """
+
     def __init__(self):
         self._config = Config()
         self._base_uri = self._config.base_uri()
@@ -25,6 +26,9 @@ class AbcRepo(ABC):
 
 
 class RepoManifest(AbcRepo):
+    """
+    Получает данные манифеста соответствующего марсохода
+    """
 
     def __init__(self, rover: str):
         super().__init__()
@@ -48,6 +52,9 @@ class RepoManifest(AbcRepo):
 
 
 class RepoBPhoto(AbcRepo):
+    """
+    Загружает изображение
+    """
 
     def __init__(self, photo: Photo):
         super().__init__()
@@ -61,6 +68,9 @@ class RepoBPhoto(AbcRepo):
 
 
 class RepoPhoto(AbcRepo):
+    """
+    Получает полный список ссылок и метаданных по существующим фотографиям
+    """
 
     def __init__(self, rover: Manifest, day: Photos):
         super().__init__()
@@ -87,12 +97,11 @@ class RepoPhoto(AbcRepo):
 
 
 class Repo:
-
     @staticmethod
     def manifest(rover: str) -> Manifest:
         manifest = RepoManifest(rover)
         return manifest.get_data()
 
     @staticmethod
-    def photos(rover: Manifest, day: Photos) -> Tuple[Photo]:
+    def photos(rover: Manifest, day: Photos) -> List[Photo]:
         return RepoPhoto(rover, day).get_data()
