@@ -5,7 +5,7 @@ from typing import Iterable, Tuple
 
 import requests
 
-from nasaapi.config import BASE_URI, TOKEN
+from nasaapi.config import Config
 from nasaapi.entity.manifest import Manifest, Photos, Photo
 
 
@@ -15,8 +15,9 @@ class AbcRepo(ABC):
     От него наследуются все классы получающие данные
     """
     def __init__(self):
-        self._base_uri = BASE_URI
-        self._token = TOKEN
+        self._config = Config()
+        self._base_uri = self._config.base_uri()
+        self._token = self._config.token()
 
     @abstractmethod
     def get_data(self):
