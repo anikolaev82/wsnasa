@@ -1,12 +1,15 @@
 from abc import ABC
-from nasaapi.entity.manifest import Photo, Photos, Manifest
 from typing import List
-from nasaapi.utils.repo import Repo
+
+from nasaapi.entity.manifest import Photo, Photos, Manifest
 from nasaapi.entity.storage import Storage
+from nasaapi.utils.repo import Repo
 
 
 class ABCRover(ABC):
-
+    """
+    Родительский класс марсохода
+    """
     def __init__(self, rover: str):
         self.__name = rover
         self.__cache = Storage()
@@ -16,6 +19,9 @@ class ABCRover(ABC):
         return self.__manifest
 
     def photos(self, days: Photos) -> List[Photo]:
+        """
+        Возвращает массив классов Photo за выбранный день
+        """
         if self.__cache.get(days) is None:
             self.__cache.set(days, Repo.photos(self.__manifest, days))
         return self.__cache.get(days)
