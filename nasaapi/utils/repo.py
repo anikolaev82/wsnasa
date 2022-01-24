@@ -1,9 +1,11 @@
 import json
 import math
 from abc import ABC, abstractmethod
-from typing import Iterable, List
+from typing import List
 
 import requests
+import base64
+import io
 
 from nasaapi.config import Config
 from nasaapi.entity.manifest import Manifest, Photos, Photo
@@ -17,11 +19,12 @@ class AbcRepo(ABC):
 
     def __init__(self):
         self._config = Config()
+        self._cache = self._config.storage()
         self._base_uri = self._config.base_uri()
         self._token = self._config.token()
 
     @abstractmethod
-    def get_data(self):
+    def request(self):
         raise NotImplementedError
 
 
@@ -37,18 +40,17 @@ class RepoManifest(AbcRepo):
         self.__rover = rover
         self.__manifest_uri = f'{self._base_uri}manifests/{self.__rover}'
         self.__keys = {'api_key': self._token}
-        self.__data = {}
 
-    def get_data(self):
-        if self.__data.get(self.__rover, None) is None:
-            print(self.__manifest_uri)
+    def request(self):
+        manifest = self._cache.get(self.__rover)
+        if manifest is None:
             manifest = requests.get(self.__manifest_uri, params=self.__keys).json()
-            photo_manifest = manifest.get('photo_manifest')
-            photos_json = photo_manifest.get('photos')
-            photo_manifest['photos'] = [Photos(**photo) for photo in photos_json]
-            self.__rover = photo_manifest['name']
-            self.__data.setdefault(self.__rover, Manifest(**photo_manifest))
-        return self.__data.get(self.__rover)
+            self._cache.set(self.__rover, manifest)
+            print('requests.get')
+        photo_manifest = manifest.get('photo_manifest')
+        photos_json = photo_manifest.get('photos')
+        photo_manifest['photos'] = [Photos(**photo) for photo in photos_json]
+        return Manifest(**photo_manifest)
 
 
 class RepoBPhoto(AbcRepo):
@@ -59,12 +61,15 @@ class RepoBPhoto(AbcRepo):
     def __init__(self, photo: Photo):
         super().__init__()
         self._photo = photo
-        self._img = None
 
-    def get_data(self):
-        if self._img is None:
-            self._img = requests.get(self._photo.img_src).content
-        return self._img
+    def request(self):
+        photo = self._cache.get(self._photo)
+        if photo is None:
+            photo = requests.get(self._photo.img_src).content
+            self._cache.set(self._photo, photo)
+        else:
+            photo = bytes(base64.b64decode(json.loads(photo)['img']))
+        return photo
 
 
 class RepoPhoto(AbcRepo):
@@ -76,32 +81,35 @@ class RepoPhoto(AbcRepo):
         super().__init__()
         self.__rover = rover
         self.__day = day
-        self.__page_size = 25
+        self._key = (self.__rover, self.__day)
+        self.__page_size = 25 #константа. Лимит на выдачу от api
         try:
             self.__page_count = int(math.ceil(self.__day.total_photos / self.__page_size)) + 1
         except ValueError:
             self.__page_count = 1
-        self.__reciv = []
-        self.__raw_data = None
         self.__base_uri = f'{self._base_uri}/rovers/{rover.name}/photos'
         self.__keys = {'sol': day.sol, 'page': 1, 'api_key': self._token}
 
-    def get_data(self):
-        if isinstance(self.__reciv, Iterable) and len(self.__reciv) == 0:
+    def request(self):
+        ret = self._cache.get(self._key)
+        if ret is None:
+            ret = []
             for i in range(1, self.__page_count):
                 self.__keys['page'] = i
-                response = requests.get(self.__base_uri, params=self.__keys)
-                self.__raw_data = json.loads(response.content)['photos']
-                self.__reciv.extend(tuple(Photo(RepoBPhoto, **i) for i in self.__raw_data))
-        return self.__reciv
+                response = requests.get(self.__base_uri, params=self.__keys).json()
+                ret.extend(response['photos'])
+                #self.__raw_data.extend(json.loads(response.content)['photos'])
+
+            self._cache.set(self._key, ret)
+        return tuple(Photo(RepoBPhoto, **i) for i in ret)
 
 
 class Repo:
     @staticmethod
     def manifest(rover: str) -> Manifest:
         manifest = RepoManifest(rover)
-        return manifest.get_data()
+        return manifest.request()
 
     @staticmethod
     def photos(rover: Manifest, day: Photos) -> List[Photo]:
-        return RepoPhoto(rover, day).get_data()
+        return RepoPhoto(rover, day).request()

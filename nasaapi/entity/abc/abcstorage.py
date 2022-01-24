@@ -1,0 +1,18 @@
+from abc import ABC, abstractmethod
+from typing import Hashable, Any
+
+from nasaapi.config import Config
+
+
+class AbcStorage(ABC):
+
+    def __init__(self):
+        self._config = Config()
+
+    @abstractmethod
+    def get(self, key: Hashable) -> Any:
+        raise NotImplementedError
+
+    @abstractmethod
+    def set(self, key: Hashable, value: Any):
+        raise NotImplementedError

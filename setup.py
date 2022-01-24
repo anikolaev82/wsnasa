@@ -17,7 +17,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3.9"
     ],
-    packages=["nasaapi", "nasaapi/entity", "nasaapi/utils", "nasaapi/rovers"],
+    packages=["nasaapi", "nasaapi/entity", "nasaapi/entity/abc", "nasaapi/utils", "nasaapi/rovers"],
     include_package_data=True,
     install_requires=["requests"]
 )

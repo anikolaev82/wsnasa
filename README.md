@@ -1,4 +1,10 @@
-#NasaApi
+##Project nasaapi
 
-Обертка над api для получения фотографий присланных марсоходами.
-Для работы требуется получить token.
+
+> from nasaapi.config import Config
+
+>Config(token='TOKEN NASA', \
+>          base_uri=f'https://api.nasa.gov/mars-photos/api/v1/', \
+>          connection_string='<строка подключения к БД. При необходимости>', \
+>          storage=classstorage)  
+

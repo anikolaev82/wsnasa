@@ -1,10 +1,13 @@
 from .manifest import Photos, Photo
 from typing import List, Tuple
 
+from nasaapi.entity.abc.abcstorage import AbcStorage
 
-class Storage:
+
+class StorageMemory(AbcStorage):
 
     def __init__(self):
+        super().__init__()
         self.__cache = {}
 
     def get(self, day: Photos) -> List[Photos]:
