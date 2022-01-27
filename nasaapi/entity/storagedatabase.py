@@ -1,27 +1,35 @@
+import datetime
 import json
+from typing import Hashable, Any
 
-from sqlalchemy import Column, Integer, String, JSON
+from sqlalchemy import Column, String, JSON, DateTime
 from sqlalchemy import create_engine, select
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from nasaapi.entity.abclass.abcstorage import AbcStorage
 from nasaapi.utils.makeuuid import MakeUUID
-from nasaapi.entity.abc.abcstorage import AbcStorage
 from .manifest import ObjectEncoder
-
-from typing import Hashable, Any
 
 Base = declarative_base()
 
 
 class ModelKeyValue(Base):
+    """
+    Хранилище ключ-значение
+    """
     __tablename__ = 'nasaapi_keyvalue'
 
     key = Column(String, primary_key=True, nullable=False)
     value = Column(JSON, nullable=False)
+    date_create = Column(DateTime, default=datetime.datetime.now())
 
 
 class StorageDatabase(AbcStorage):
+    """
+    Класс реализует работу с БД.
+    Кэширует полученные данные
+    """
 
     def __init__(self):
         super().__init__()
@@ -31,10 +39,10 @@ class StorageDatabase(AbcStorage):
         Base.metadata.create_all(bind=self._engine)
 
     def get(self, key: Hashable) -> Any:
-        s = select(ModelKeyValue).where(ModelKeyValue.key == f"{MakeUUID.make(key)}")
+        dataset = select(ModelKeyValue).where(ModelKeyValue.key == f"{MakeUUID.make(key)}")
         ret = None
         with self._engine.connect() as conn:
-            for row in conn.execute(s).all():
+            for row in conn.execute(dataset).all():
                 ret = json.loads(row.value)
         return ret
 

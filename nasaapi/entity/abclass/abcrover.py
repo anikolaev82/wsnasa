@@ -1,11 +1,10 @@
-from abc import ABC
 from typing import List
 
-from nasaapi.entity.manifest import Photo, Photos, Manifest
+from nasaapi.entity.manifest import Photo, DayOfMars, Manifest
 from nasaapi.utils.repo import Repo
 
 
-class ABCRover(ABC):
+class ABCRover():
     """
     Родительский класс марсохода
     """
@@ -15,9 +14,12 @@ class ABCRover(ABC):
         self.__manifest = Repo.manifest(self.__name)
 
     def manifest(self) -> Manifest:
+        """
+        Возвращает манифест марсохода.
+        """
         return self.__manifest
 
-    def photos(self, days: Photos) -> List[Photo]:
+    def photos(self, days: DayOfMars) -> List[Photo]:
         """
         Возвращает массив классов Photo за выбранный день
         """

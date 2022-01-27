@@ -1,4 +1,4 @@
-from ..entity.abc.abcrover import ABCRover
+from ..entity.abclass.abcrover import ABCRover
 
 
 class Spirit(ABCRover):

@@ -8,7 +8,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="nasaapi",
-    version="1.0.0",
+    version="1.0.0b",
     description="Wrapper for nasa api",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -17,7 +17,7 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3.9"
     ],
-    packages=["nasaapi", "nasaapi/entity", "nasaapi/entity/abc", "nasaapi/utils", "nasaapi/rovers"],
+    packages=["nasaapi", "nasaapi/entity", "nasaapi/entity/abclass", "nasaapi/utils", "nasaapi/rovers"],
     include_package_data=True,
-    install_requires=["requests"]
+    install_requires=["requests", "sqlalchemy", "psycopg2"]
 )

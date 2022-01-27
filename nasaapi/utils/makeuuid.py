@@ -1,9 +1,11 @@
-from typing import Iterable
 import uuid
+from typing import Iterable
 
 
 class MakeUUID:
-
+    """
+    Класс для генерации UID
+    """
     @staticmethod
     def make(key) -> uuid.UUID:
         key_str = key

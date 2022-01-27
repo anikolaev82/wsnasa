@@ -5,7 +5,9 @@ from nasaapi.config import Config
 
 
 class AbcStorage(ABC):
-
+    """
+    Интерфейс хранилища
+    """
     def __init__(self):
         self._config = Config()
 
