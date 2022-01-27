@@ -1,4 +1,4 @@
-from ..entity.abcrover import ABCRover
+from ..entity.abclass.abcrover import ABCRover
 
 
 class Curiosity(ABCRover):
