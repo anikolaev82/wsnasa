@@ -49,7 +49,6 @@ class RepoManifest(AbcRepo):
         if manifest is None:
             manifest = requests.get(self.__manifest_uri, params=self.__keys).json()
             self._cache.set(self.__rover, manifest)
-            print('requests.get')
         photo_manifest = manifest.get('photo_manifest')
         photos_json = photo_manifest.get('photos')
         photo_manifest['photos'] = [DayOfMars(**photo) for photo in photos_json]

@@ -19,5 +19,5 @@ setup(
     ],
     packages=["nasaapi", "nasaapi/entity", "nasaapi/entity/abclass", "nasaapi/utils", "nasaapi/rovers"],
     include_package_data=True,
-    install_requires=["requests", "sqlalchemy", "psycopg2"]
+    install_requires=["requests", "sqlalchemy", "psycopg2-binary"]
 )
