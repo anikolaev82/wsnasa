@@ -1,4 +1,5 @@
 import base64
+import datetime
 import json
 import math
 from abc import ABC, abstractmethod
@@ -8,6 +9,7 @@ import requests
 
 from nasaapi.config import Config
 from nasaapi.entity.manifest import Manifest, DayOfMars, Photo
+from nasaapi.entity.apod import ResponseAPOD
 
 
 class AbcRepo(ABC):
@@ -25,6 +27,47 @@ class AbcRepo(ABC):
     @abstractmethod
     def request(self):
         raise NotImplementedError
+
+
+class RepoAPOD(AbcRepo):
+
+    def __init__(self, date: datetime.date):
+        super().__init__()
+        self.__date = date.strftime('%Y-%m-%d')
+        self.__req_uri = self._base_uri
+        self.__keys = {'api_key': self._token, \
+                       'date': self.__date
+                       }
+
+    def request(self):
+        apod = self._cache.get(f'apod{self.__date}')
+        if apod is None:
+            apod = requests.get(self.__req_uri, params=self.__keys).json()
+            self._cache.set(f'apod{self.__date}', apod)
+        return ResponseAPOD(**apod)
+
+
+class RepoAPODList(AbcRepo):
+
+    def __init__(self, start_date: datetime.datetime, end_date: datetime.datetime):
+        super().__init__()
+        if start_date is None:
+            self.__start_date = start_date.strftime('%Y-%m-%d')
+        if end_date is None:
+            self.__end_date = end_date.strftime('%Y-%m-%d')
+
+        self.__req_uri = self._base_uri
+        self.__keys = {'api_key': self._token, \
+                       'start_date': self.__start_date, \
+                       'end_date': self.__end_date
+                       }
+
+    def request(self):
+        apod_list = self._cache.get(f'apodliststartdate{self.__start_datedate}enddate{self.__end_date}')
+        if apod_list is None:
+            apod_list = requests.get(self.__req_uri, params=self.__keys).json()
+            self._cache.set(f'apodliststartdate{self.__start_datedate}enddate{self.__end_date}', apod_list)
+        return tuple(ResponseAPOD(**i) for i in apod_list)
 
 
 class RepoManifest(AbcRepo):
@@ -122,3 +165,11 @@ class Repo:
     @staticmethod
     def photos(rover: Manifest, day: DayOfMars) -> Tuple[Photo]:
         return RepoPhoto(rover, day).request()
+
+    @staticmethod
+    def apod(date: datetime) -> ResponseAPOD:
+        return RepoAPOD(date).request()
+
+    @staticmethod
+    def apod_list(start_date: datetime.datetime, end_date: datetime.datetime) -> Tuple[ResponseAPOD]:
+        return RepoAPODList(start_date, end_date).request()

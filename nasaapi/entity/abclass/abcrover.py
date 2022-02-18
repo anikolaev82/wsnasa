@@ -4,7 +4,7 @@ from nasaapi.entity.manifest import Photo, DayOfMars, Manifest
 from nasaapi.utils.repo import Repo
 
 
-class ABCRover():
+class ABCRover:
     """
     Родительский класс марсохода
     """

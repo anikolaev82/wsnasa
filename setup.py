@@ -9,7 +9,7 @@ README = (HERE / "README.md").read_text()
 setup(
     name="nasaapi",
     version="1.0.0b",
-    description="Wrapper for nasa api",
+    description="Library for use nasa.api",
     long_description=README,
     long_description_content_type="text/markdown",
     author="Artem Nikolaev",
