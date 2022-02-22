@@ -7,8 +7,8 @@ HERE = pathlib.Path(__file__).parent
 README = (HERE / "README.md").read_text()
 
 setup(
-    name="nasaapi",
-    version="1.0.0b",
+    name="wsnasa",
+    version="0.0.2beta",
     description="Library for use nasa.api",
     long_description=README,
     long_description_content_type="text/markdown",
@@ -17,7 +17,14 @@ setup(
     classifiers=[
         "Programming Language :: Python :: 3.9"
     ],
-    packages=["nasaapi", "nasaapi/entity", "nasaapi/entity/abclass", "nasaapi/utils", "nasaapi/rovers"],
+    packages=["wsnasa",
+              "wsnasa/services/",
+              "wsnasa/services/apod",
+              "wsnasa/services/rovers",
+              "wsnasa/entity",
+              "wsnasa/entity/abclass",
+              "wsnasa/utils"
+            ],
     include_package_data=True,
     install_requires=["requests", "sqlalchemy", "psycopg2-binary"]
 )

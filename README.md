@@ -1,23 +1,26 @@
-# Библиотека для сервисов NASA
+# Library for use services of NASA
 
 
-После установки пакета, необходимо произвести настройку.  
+Install package
+>pip install wsnasa  
 
->from nasaapi.config import Config  
+After installed package need does settings it for work. 
+
+>from wsnasa.config import Config  
 >Config(token='TOKENNASA',storage=ClassStorage, connection_string='conn_str')  
 
+ClassStorage - wsnasa.entity.storage*
+
 ## Token
-Получить ключ можно здесь https://api.nasa.gov/  
-или использовать DEMO_KEY  
+Get keys can here https://api.nasa.gov/
+or use DEMO_KEY  
 
 ## Storage
-Определяет способ хранинения кэша.  
-В наличии 2 способа: StorageMemory, StorageDatabase.  
-Для создания собственного способа, используется интерфейс  
+Class <Storage*> implementes rule stores caches
+Has second of classes: StorageMemory, StorageDatabase.  
+If need use another class for storage use for implement of the interface  <AbcStorage>
 
->from nasaapi.entity.abclass.abcstorage import AbcStorage
+>from wsnasa.entity.abclass.abcstorage import AbcStorage
 
 
-## connestion string
-Указывается если выбрано хранилище StorageDatabase
 
